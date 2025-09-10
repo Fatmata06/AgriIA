@@ -4,18 +4,32 @@ export default async function handler(req, res){
   try {
     const { base64Image } = req.body;
 
-    const response = await fetch('https://api.plant.id/identification', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Api-Key': process.env.PLANT_ID_API_KEY
-      },
-      body: JSON.stringify({
-        images: [base64Image],
-        modifiers: ["crops_simple"],
-        plant_details: ["common_names","disease","probability"]
-      })
-    });
+    // const response = await fetch('https://api.plant.id/identification', {
+    //   method:'POST',
+    //   headers:{
+    //     'Content-Type':'application/json',
+    //     'Api-Key': process.env.PLANT_ID_API_KEY
+    //   },
+    //   body: JSON.stringify({
+    //     images: [base64Image],
+    //     modifiers: ["crops_simple"],
+    //     plant_details: ["common_names","disease","probability"]
+    //   })
+    // });
+    const response = await fetch('https://api.plant.id/api/v3/identification', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Api-Key': process.env.PLANT_ID_API_KEY
+    },
+    body: JSON.stringify({
+      images: [base64Image],
+      modifiers: ["crops_simple"],
+      plant_details: ["common_names","url","taxonomy"],
+      disease_details: ["common_names","url","description"]
+    })
+  });
+
 
     const data = await response.json();
     console.log('Plant.id response:', data);  // utile pour debug

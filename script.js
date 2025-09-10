@@ -59,18 +59,21 @@ async function handleFile(e){
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
+  
   reader.onload = async function(ev){
     const base64 = ev.target.result.split(',')[1];
     document.getElementById('previewBox').innerHTML = `<img src="${ev.target.result}" class="preview">`;
     document.getElementById('diagnosis').textContent = "Analyse en cours...";
 
-    try{
+    try {
       const res = await fetch('/api/plant', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ base64Image: base64 })
       });
+
       const data = await res.json();
+
       if(data.suggestions && data.suggestions.length > 0){
         const s = data.suggestions[0];
         document.getElementById('diagnosis').textContent = 
@@ -83,5 +86,7 @@ async function handleFile(e){
       document.getElementById('diagnosis').textContent = "Erreur lors de l'analyse Plant.id.";
     }
   }
+
   reader.readAsDataURL(file);
 }
+

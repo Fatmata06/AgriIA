@@ -26,5 +26,7 @@ export default async function handler(req, res){
   } catch(err){
     console.error(err);
     res.status(500).json({ error:'Erreur serveur Plant.id' });
+    const data = await response.text(); // pas .json tout de suite
+console.log("Plant.id response:", data);
   }
 }

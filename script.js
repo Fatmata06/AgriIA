@@ -89,3 +89,14 @@ async function handleFile(e){
 
   reader.readAsDataURL(file);
 }
+
+async function getWeather() {
+  const res = await fetch("/api/weather", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ lat: 14.3301, lon: -16.4065 }) // Fatick
+  });
+
+  const data = await res.json();
+  console.log("Météo Fatick:", data);
+}

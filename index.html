@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Guide Agricole Intelligent</title>
-  <meta name="description" content="Prototype - Guide Agricole Intelligent pour aider les petits producteurs au Sénégal" />
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,11 +15,10 @@
         <p class="lead">Conseils, météo locale, détection des maladies et bonnes pratiques.</p>
       </div>
     </div>
-
     <nav>
-      <button class="btn" onclick="scrollToSection('features')">Fonctionnalités</button>
-      <button class="btn" onclick="scrollToSection('detection')">Détection</button>
-      <button class="btn" onclick="scrollToSection('practices')">Bonnes pratiques</button>
+      <button class="nav-btn" data-target="features">Fonctionnalités</button>
+      <button class="nav-btn" data-target="detection">Détection</button>
+      <button class="nav-btn" data-target="practices">Bonnes pratiques</button>
     </nav>
   </header>
 
@@ -28,67 +26,46 @@
     <div class="hero">
       <div class="left">
         <h2>Augmentez vos rendements avec des conseils adaptés</h2>
-        <p class="small">Choisissez votre culture et votre zone — recevez des conseils pratiques, des alertes météo et la possibilité de faire analyser des photos de feuilles malades.</p>
-
-        <!-- Onglets cultures -->
         <div class="tabs">
-          <button class="tab active" data-crop="mil" onclick="selectCrop(event)">Mil</button>
-          <button class="tab" data-crop="arachide" onclick="selectCrop(event)">Arachide</button>
-          <button class="tab" data-crop="riz" onclick="selectCrop(event)">Riz</button>
-          <button class="tab" data-crop="mangue" onclick="selectCrop(event)">Mangue</button>
-          <button class="tab" data-crop="autre" onclick="selectCrop(event)">Autre</button>
+          <button class="tab active" data-crop="mil">Mil</button>
+          <button class="tab" data-crop="arachide">Arachide</button>
+          <button class="tab" data-crop="riz">Riz</button>
+          <button class="tab" data-crop="mangue">Mangue</button>
+          <button class="tab" data-crop="autre">Autre</button>
         </div>
 
-        <!-- Indicateurs -->
         <div class="kpi">
-          <div class="item">
-            <div class="small">Rendement estimé</div>
-            <div class="value" id="kpi-yield">—</div>
-          </div>
-          <div class="item">
-            <div class="small">Prochaine pluie</div>
-            <div class="value" id="kpi-rain">—</div>
-          </div>
-          <div class="item">
-            <div class="small">Risques maladies</div>
-            <div class="value" id="kpi-disease">—</div>
-          </div>
+          <div class="item"><div class="small">Rendement estimé</div><div id="kpi-yield">—</div></div>
+          <div class="item"><div class="small">Prochaine pluie</div><div id="kpi-rain">—</div></div>
+          <div class="item"><div class="small">Risques maladies</div><div id="kpi-disease">—</div></div>
         </div>
 
-        <!-- Génération conseil IA -->
         <div style="margin-top:12px">
           <label class="small">Taille du champ (ha)</label>
-          <input type="text" id="field-size" placeholder="Ex: 1.5" />
+          <input type="text" id="field-size" placeholder="Ex: 1.5">
         </div>
-        <button class="tab" onclick="generateAdvice()">Générer le conseil</button>
+        <button id="generate-advice">Générer le conseil</button>
         <div id="advice-output" style="margin-top:12px"></div>
       </div>
-      <input type="file" id="imgfile" accept="image/*" onchange="handleFile(event)" />
-<div id="previewBox"></div>
-<div id="diagnosis"></div>
 
-
-      <!-- Localisation / météo -->
       <aside>
         <div class="card">
           <div class="small">Localisation</div>
           <input type="text" id="location" placeholder="Ex: Thiès, Mbour..." />
-          <button class="btn" onclick="setLocation()">OK</button>
-          <div class="small" id="weather-updated">—</div>
-          <div class="small" id="weather-alerts">Aucune alerte.</div>
+          <button id="set-location">OK</button>
+          <div id="weather-updated" class="small">—</div>
+          <div id="weather-alerts" class="small">Aucune alerte.</div>
         </div>
       </aside>
     </div>
 
-    <!-- Détection maladies -->
     <section id="detection" class="section">
       <h3>Détection & prévention des maladies</h3>
-      <input type="file" id="imgfile" accept="image/*" onchange="handleFile(event)" />
+      <input type="file" id="imgfile" accept="image/*" />
       <div id="previewBox"></div>
       <div id="diagnosis"></div>
     </section>
 
-    <!-- Bonnes pratiques -->
     <section id="practices" class="section">
       <h3>Bonnes pratiques</h3>
       <ol>
@@ -100,11 +77,7 @@
     </section>
   </main>
 
-  <footer>
-    Prototype — Guide Agricole Intelligent • Sénégal 🌍
-  </footer>
-
+  <footer>Prototype — Guide Agricole Intelligent • Sénégal 🌍</footer>
   <script src="script.js"></script>
-  <script src="api/plant.js"></script>
 </body>
 </html>

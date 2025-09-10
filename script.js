@@ -89,13 +89,14 @@ const res = await fetch('/api/plant', {
 
       const data = await res.json();
 
-      if(data.suggestions && data.suggestions.length > 0){
-        const s = data.suggestions[0];
-        document.getElementById('diagnosis').textContent = 
-          `Plante probable: ${s.plant_name}\nMaladie possible: ${s.disease ? s.disease.name : 'Aucune'}\nConfiance: ${Math.round(s.probability*100)}%`;
-      } else {
-        document.getElementById('diagnosis').textContent = "Impossible d'identifier la plante.";
-      }
+      if (data.suggestions && data.suggestions.length > 0) {
+  const s = data.suggestions[0];
+  document.getElementById('diagnosis').textContent =
+    `Plante probable: ${s.plant_name}\nMaladie possible: ${s.disease ? s.disease.name : 'Aucune'}\nConfiance: ${Math.round(s.probability*100)}%`;
+} else {
+  document.getElementById('diagnosis').textContent = "Impossible d'identifier la plante.";
+}
+
     } catch(err){
       console.error(err);
       document.getElementById('diagnosis').textContent = "Erreur lors de l'analyse Plant.id.";

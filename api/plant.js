@@ -1,12 +1,10 @@
-import fetch from 'node-fetch';
-
 export default async function handler(req, res){
   if(req.method !== 'POST') return res.status(405).json({ error: 'Méthode non autorisée' });
 
   try {
     const { base64Image } = req.body;
 
-    const response = await fetch('https://plant.id/identification', {
+    const response = await fetch('https://api.plant.id/identification', {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -26,7 +24,5 @@ export default async function handler(req, res){
   } catch(err){
     console.error(err);
     res.status(500).json({ error:'Erreur serveur Plant.id' });
-    const data = await response.text(); // pas .json tout de suite
-console.log("Plant.id response:", data);
   }
 }

@@ -1,7 +1,6 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Méthode non autorisée" });
-  }
+  if (req.method !== 'POST')
+    return res.status(405).json({ error: 'Méthode non autorisée' });
 
   try {
     const { base64Image } = req.body;
@@ -10,26 +9,26 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Api-Key": process.env.PLANT_ID_API_KEY,
+        "Api-Key": process.env.PLANT_ID_API_KEY
       },
       body: JSON.stringify({
         images: [base64Image],
-        modifiers: ["health=all", "similar_images=true"], // ✅ correct en v3
-        plant_details: ["common_names", "probability", "disease", "url"],
-      }),
+        // ✅ bons modificateurs
+        modifiers: ["health", "similar_images"],
+        plant_details: ["common_names", "url", "wiki_description"]
+      })
     });
 
-    const text = await response.text();
+    const data = await response.json();
 
-    try {
-      const data = JSON.parse(text);
-      res.status(200).json(data);
-    } catch (err) {
-      console.error("Erreur parsing JSON:", err, text);
-      res.status(500).json({ error: "Réponse non valide de Plant.id", raw: text });
+    // Si Plant.id retourne une erreur claire
+    if (data.error) {
+      return res.status(400).json({ error: data.error });
     }
+
+    res.status(200).json(data);
   } catch (err) {
-    console.error("Erreur serveur Plant.id:", err);
+    console.error("Erreur Plant.id:", err);
     res.status(500).json({ error: "Erreur serveur Plant.id" });
   }
 }

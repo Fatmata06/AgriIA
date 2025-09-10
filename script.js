@@ -1,14 +1,15 @@
+// Onglets
 const tabs = document.querySelectorAll('.tab');
-const navBtns = document.querySelectorAll('.nav-btn');
-
 tabs.forEach(tab => {
-  tab.addEventListener('click', (e) => {
+  tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     updateKPI(tab.dataset.crop);
   });
 });
 
+// Navigation
+const navBtns = document.querySelectorAll('.nav-btn');
 navBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = document.getElementById(btn.dataset.target);
@@ -16,9 +17,25 @@ navBtns.forEach(btn => {
   });
 });
 
+// Générer le conseil
 document.getElementById('generate-advice').addEventListener('click', generateAdvice);
+
+// Définir la localisation
 document.getElementById('set-location').addEventListener('click', setLocation);
+
+// Gestion du fichier image
 document.getElementById('imgfile').addEventListener('change', handleFile);
+
+// Exemple fonction KPI
+function updateKPI(crop){
+  const yields = {mil:'1.2 t/ha', arachide:'0.9 t/ha', riz:'2.4 t/ha', mangue:'—', autre:'—'};
+  const rains = {mil:'3 jours', arachide:'1 jour', riz:'5 jours', mangue:'Orage possible', autre:'—'};
+  const disease = {mil:'Risque faible', arachide:'Risque moyen', riz:'Risque élevé', mangue:'Risque faible', autre:'—'};
+  document.getElementById('kpi-yield').textContent = yields[crop];
+  document.getElementById('kpi-rain').textContent = rains[crop];
+  document.getElementById('kpi-disease').textContent = disease[crop];
+}
+
 
 function updateKPI(crop){
   const yields = {mil:'1.2 t/ha', arachide:'0.9 t/ha', riz:'2.4 t/ha', mangue:'—', autre:'—'};
@@ -61,16 +78,14 @@ async function handleFile(e){
   const reader = new FileReader();
   
   reader.onload = async function(ev){
-    const base64 = ev.target.result.split(',')[1];
-    document.getElementById('previewBox').innerHTML = `<img src="${ev.target.result}" class="preview">`;
-    document.getElementById('diagnosis').textContent = "Analyse en cours...";
+    const base64 = ev.target.result.split(',')[1]; // supprime data:image/png;base64,
+const res = await fetch('/api/plant', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify({ base64Image: base64 })
+});
 
     try {
-      const res = await fetch('/api/plant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ base64Image: base64 })
-      });
 
       const data = await res.json();
 

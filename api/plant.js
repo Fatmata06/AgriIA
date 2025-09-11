@@ -13,15 +13,21 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         images: [base64Image],
-        // ✅ bons modificateurs
         modifiers: ["health", "similar_images"],
         plant_details: ["common_names", "url", "wiki_description"]
       })
     });
 
-    const data = await response.json();
+    const text = await response.text();
 
-    // Si Plant.id retourne une erreur claire
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("Erreur parsing JSON:", text);
+      return res.status(500).json({ error: "Réponse Plant.id non JSON", raw: text });
+    }
+
     if (data.error) {
       return res.status(400).json({ error: data.error });
     }

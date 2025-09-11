@@ -5,6 +5,9 @@ export default async function handler(req, res) {
 
   try {
     const { base64Image } = req.body;
+    if (!base64Image) {
+      return res.status(400).json({ error: 'Image manquante' });
+    }
 
     const response = await fetch("https://api.plant.id/v3/identification", {
       method: "POST",
@@ -14,42 +17,40 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         images: [base64Image],
-        modifiers: ["health=all", "similar_images=true"],
-        plant_details: ["common_names","url","wiki_description"],
-        language: "fr"
+        modifiers: ["health", "similar_images"],
+        plant_details: ["common_names", "url", "wiki_description"],
+        health: "all",
+        similar_images: true,
+        language: "fr"  // renvoie les détails en français
       })
     });
 
     const text = await response.text();
+
     let data;
     try {
       data = JSON.parse(text);
-    } catch(e) {
+    } catch (e) {
       console.error("Erreur parsing JSON Plant.id:", text);
-      return res.status(500).json({ error: "Réponse Plant.id non JSON", raw: text });
+      return res.status(500).json({ error: "Réponse Plant.id invalide" });
     }
 
+    // Vérifie s’il y a une erreur retournée par Plant.id
     if (data.error) {
       return res.status(400).json({ error: data.error });
     }
 
-    // Diagnostic simplifié
-    const suggestion = data.suggestions?.[0];
-    if (suggestion) {
-      const disease = suggestion.disease ? suggestion.disease.name : "Aucune";
-      const probability = Math.round(suggestion.probability * 100);
-      res.status(200).json({
-        plant_name: suggestion.plant_name,
-        disease,
-        probability,
-        description: suggestion.wiki_description?.value || "",
-        url: suggestion.url
-      });
-    } else {
-      res.status(200).json({ message: "Impossible d'identifier la plante." });
+    // Préparer un diagnostic simple en texte
+    let output = "Impossible d'identifier la plante.";
+    if (data.suggestions && data.suggestions.length > 0) {
+      const s = data.suggestions[0];
+      const maladie = s.disease ? s.disease.name : "Aucune";
+      const confiance = Math.round(s.probability * 100);
+      output = `Plante probable: ${s.plant_name}\nMaladie possible: ${maladie}\nConfiance: ${confiance}%`;
     }
 
-  } catch(err) {
+    res.status(200).json({ diagnosis: output, raw: data });
+  } catch (err) {
     console.error("Erreur Plant.id:", err);
     res.status(500).json({ error: "Erreur serveur Plant.id" });
   }

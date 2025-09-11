@@ -15,14 +15,15 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         "Api-Key": process.env.PLANT_ID_API_KEY
       },
-      body: JSON.stringify({
-        images: [base64Image],
-        modifiers: ["health", "similar_images"],
-        plant_details: ["common_names", "url", "wiki_description"],
-        health: "all",
-        similar_images: true,
-        language: "fr"  // renvoie les détails en français
-      })
+    body: JSON.stringify({
+      images: [base64Image],
+      health: "all",
+      similar_images: true,
+      plant_details: ["common_names", "url", "wiki_description"],
+      language: "fr"
+    })
+
+
     });
 
     const text = await response.text();
